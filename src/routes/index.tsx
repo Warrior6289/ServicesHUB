@@ -7,6 +7,15 @@ import { AdminPage } from '../pages/AdminPage';
 import { UserDashboardPage } from '../pages/UserDashboardPage';
 import { SellerDashboardPage } from '../pages/SellerDashboardPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { ServicesPage } from '../pages/ServicesPage';
+import { HowItWorksPage } from '../pages/HowItWorksPage';
+import { PricingPage } from '../pages/PricingPage';
+import { ContactPage } from '../pages/ContactPage';
+import { HelpCenterPage } from '../pages/HelpCenterPage';
+import { FAQPage } from '../pages/FAQPage';
+import { TermsPage } from '../pages/TermsPage';
+import { PrivacyPage } from '../pages/PrivacyPage';
+import { CookiesPage } from '../pages/CookiesPage';
 import { RequireAdmin, AuthProvider } from '../lib/auth';
 import { RouteErrorBoundary } from '../ui/RouteErrorBoundary';
 import React from 'react';
@@ -28,6 +37,15 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
+      { path: '/services', element: <ServicesPage /> },
+      { path: '/how-it-works', element: <HowItWorksPage /> },
+      { path: '/pricing', element: <PricingPage /> },
+      { path: '/contact', element: <ContactPage /> },
+      { path: '/help', element: <HelpCenterPage /> },
+      { path: '/faq', element: <FAQPage /> },
+      { path: '/terms', element: <TermsPage /> },
+      { path: '/privacy', element: <PrivacyPage /> },
+      { path: '/cookies', element: <CookiesPage /> },
       { path: '/admin', element: (
         <RequireAdmin>
           <AdminPage />
