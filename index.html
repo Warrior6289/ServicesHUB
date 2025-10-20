@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Services Hub</title>
+    <style>
+      /* Prevent overscroll bounce and ensure consistent background */
+      html, body {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+        background-color: #ffffff;
+        overflow-x: hidden;
+      }
+      
+      body.dark {
+        background-color: #0f172a;
+      }
+      
+      /* Ensure background covers overscroll areas */
+      body::before {
+        content: '';
+        position: fixed;
+        top: -100vh;
+        left: 0;
+        right: 0;
+        bottom: -100vh;
+        background-color: #ffffff;
+        z-index: -1;
+        pointer-events: none;
+      }
+      
+      body.dark::before {
+        background-color: #0f172a;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
