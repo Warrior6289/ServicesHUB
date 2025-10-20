@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routes/index';
 import './index.css';
+import 'leaflet/dist/leaflet.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

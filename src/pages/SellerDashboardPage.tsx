@@ -3,12 +3,37 @@ import { ListingCard, type Listing } from '../components/ListingCard';
 import { ListingForm, type ListingFormValues } from '../components/ListingForm';
 import { Skeleton, SkeletonText } from '../components/Skeleton';
 import { createListing as apiCreate, fetchSellerListings, removeListing as apiRemove, updateListing as apiUpdate } from '../api/services';
+import { InstantRequestItem } from '../components/InstantRequestItem';
+import { useServiceRequestPolling } from '../hooks/useServiceRequestPolling';
+// import { acceptRequest } from '../api/serviceRequests';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Message = { id: string; from: string; content: string; at: string };
 
 export const SellerDashboardPage: React.FC = () => {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [listings, setListings] = React.useState<Listing[]>([]);
+  const [showIncomingRequests, setShowIncomingRequests] = React.useState(true);
+  const [acceptingId, setAcceptingId] = React.useState<string | null>(null);
+  const [sortBy, setSortBy] = React.useState<'distance' | 'price' | 'time'>('time');
+  
+  // Polling for incoming service requests
+  const {
+    requests: incomingRequests,
+    loading: requestsLoading,
+    newRequestsCount,
+    resetNewRequestsCount,
+    refetch,
+  } = useServiceRequestPolling({
+    enabled: true, // Always poll when seller dashboard is open
+    intervalMs: 20000, // Poll every 20 seconds
+    radius: 50, // 50km radius
+    useMockData: true, // Use mock data for development
+  });
+
+  // Seller's location (would come from profile in production)
+  const sellerLocation = { lat: 40.7128, lng: -74.0060 };
+
   React.useEffect(() => {
     let mounted = true;
     (async () => {
@@ -60,9 +85,124 @@ export const SellerDashboardPage: React.FC = () => {
     apiRemove(id).catch(() => {/* keep optimistic */});
   };
 
+  const handleAcceptRequest = async (requestId: string) => {
+    try {
+      setAcceptingId(requestId);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In production: await acceptRequest(requestId);
+      
+      alert(`Request accepted! You can now view it in your accepted requests.`);
+      refetch(); // Refresh the list
+    } catch (error) {
+      console.error('Failed to accept request:', error);
+      alert('Failed to accept request. Please try again.');
+    } finally {
+      setAcceptingId(null);
+    }
+  };
+
+  const sortedRequests = [...incomingRequests].sort((a, b) => {
+    if (sortBy === 'price') {
+      return b.currentPrice - a.currentPrice;
+    } else if (sortBy === 'distance') {
+      // Calculate distances (simplified, would use actual calculation)
+      return 0;
+    } else {
+      // Sort by time (newest first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+  });
+
   return (
     <section className="max-w-none">
       <h1 className="text-2xl font-semibold">Seller Dashboard</h1>
+
+      {/* Incoming Requests Section */}
+      <div className="mt-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-semibold">Incoming Instant Requests</h2>
+            {newRequestsCount > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="px-3 py-1 rounded-full bg-red-500 text-white text-sm font-bold animate-pulse"
+              >
+                {newRequestsCount} New!
+              </motion.span>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Sort By */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm dark:bg-slate-800"
+            >
+              <option value="time">Newest First</option>
+              <option value="price">Highest Price</option>
+              <option value="distance">Nearest</option>
+            </select>
+            
+            <button
+              onClick={() => {
+                setShowIncomingRequests(!showIncomingRequests);
+                if (!showIncomingRequests) resetNewRequestsCount();
+              }}
+              className="text-primary-600 dark:text-primary-400 hover:underline text-sm font-medium"
+            >
+              {showIncomingRequests ? 'Hide' : 'Show'} ({incomingRequests.length})
+            </button>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {showIncomingRequests && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {requestsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="rounded-xl border p-4 dark:border-slate-700">
+                      <Skeleton className="h-5 w-1/3" />
+                      <SkeletonText className="mt-2" lines={3} />
+                    </div>
+                  ))}
+                </div>
+              ) : sortedRequests.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {sortedRequests.map((request) => (
+                    <InstantRequestItem
+                      key={request.id}
+                      request={request}
+                      sellerLocation={sellerLocation}
+                      onAccept={handleAcceptRequest}
+                      accepting={acceptingId === request.id}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                  <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <p className="text-gray-600 dark:text-gray-400">No incoming requests at the moment</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                    We're checking every 20 seconds for new requests
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">

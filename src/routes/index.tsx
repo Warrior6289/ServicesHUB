@@ -16,6 +16,8 @@ import { FAQPage } from '../pages/FAQPage';
 import { TermsPage } from '../pages/TermsPage';
 import { PrivacyPage } from '../pages/PrivacyPage';
 import { CookiesPage } from '../pages/CookiesPage';
+import { RequestServicePage } from '../pages/RequestServicePage';
+import { ServiceRequestDetailsPage } from '../pages/ServiceRequestDetailsPage';
 import { RequireAdmin, AuthProvider } from '../lib/auth';
 import { RouteErrorBoundary } from '../ui/RouteErrorBoundary';
 import React from 'react';
@@ -53,6 +55,9 @@ export const router = createBrowserRouter([
       ) },
       { path: '/user-dashboard', element: <UserDashboardPage /> },
       { path: '/seller-dashboard', element: <SellerDashboardPage /> },
+      { path: '/dashboard', element: <UserDashboardPage /> }, // Alias for user dashboard
+      { path: '/request-service', element: <RequestServicePage /> },
+      { path: '/requests/:id', element: <ServiceRequestDetailsPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

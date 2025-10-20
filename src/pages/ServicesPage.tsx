@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CategoryCard } from '../components/CategoryCard';
 import { SearchBar } from '../components/SearchBar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const serviceCategories = [
   {
@@ -99,6 +99,7 @@ const serviceCategories = [
 ];
 
 export const ServicesPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const filteredServices = serviceCategories.filter((service) => {
@@ -164,12 +165,25 @@ export const ServicesPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <CategoryCard
-                  title={service.title}
-                  description={service.description}
-                  rating={service.rating}
-                  icon={<span className="text-primary-600 dark:text-primary-400">{service.icon}</span>}
-                />
+                <div className="relative group">
+                  <CategoryCard
+                    title={service.title}
+                    description={service.description}
+                    rating={service.rating}
+                    icon={<span className="text-primary-600 dark:text-primary-400">{service.icon}</span>}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-b-xl">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/request-service?category=${service.title}&categoryId=${service.title.toLowerCase()}`);
+                      }}
+                      className="w-full py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors shadow-lg"
+                    >
+                      Request Service
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
