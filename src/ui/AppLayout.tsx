@@ -1,6 +1,5 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { ThemeToggle } from '../components/ThemeToggle';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -15,17 +14,7 @@ export const AppLayout: React.FC = () => {
     <div className="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 flex flex-col">
       <Header />
       <main className={`flex-1 ${isHomePage ? '' : isAuthPage ? 'flex items-center justify-center px-4 py-8' : 'mx-auto max-w-6xl px-4 py-8'}`}>
-        {!isHomePage && !isAuthPage && (
-          <>
-            <div className="mb-4 flex justify-end"><ThemeToggle /></div>
-            <Breadcrumbs />
-          </>
-        )}
-        {isAuthPage && (
-          <div className="mb-4 flex justify-end absolute top-20 right-4">
-            <ThemeToggle />
-          </div>
-        )}
+        {!isHomePage && !isAuthPage && <Breadcrumbs />}
         <RouteTransitions>
           <Outlet />
         </RouteTransitions>

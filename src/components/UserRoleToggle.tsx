@@ -1,8 +1,11 @@
 import React from 'react';
 import { useAuth } from '../lib/auth';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const UserRoleToggle: React.FC = () => {
   const { role, loginAs } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const roles = [
@@ -44,6 +47,25 @@ export const UserRoleToggle: React.FC = () => {
   const handleRoleChange = (newRole: 'buyer' | 'seller' | 'admin') => {
     loginAs(newRole);
     setIsOpen(false);
+    
+    // Navigate to the appropriate dashboard based on the new role
+    const currentPath = location.pathname;
+    
+    // If we're currently on a dashboard page, navigate to the new role's dashboard
+    if (currentPath === '/user-dashboard' || currentPath === '/seller-dashboard' || currentPath === '/admin' || currentPath === '/dashboard') {
+      switch (newRole) {
+        case 'buyer':
+          navigate('/user-dashboard');
+          break;
+        case 'seller':
+          navigate('/seller-dashboard');
+          break;
+        case 'admin':
+          navigate('/admin');
+          break;
+      }
+    }
+    // If we're on other pages, we don't need to navigate - the header will show the correct dashboard link
   };
 
   return (

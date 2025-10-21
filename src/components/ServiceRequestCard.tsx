@@ -7,7 +7,10 @@ type ServiceRequestCardProps = {
   request: ServiceRequest;
   onBoostPrice?: (requestId: string) => void;
   onCancel?: (requestId: string) => void;
+  onAccept?: (requestId: string) => void;
   viewType?: 'buyer' | 'seller';
+  sellerLocation?: { lat: number; lng: number };
+  accepting?: boolean;
 };
 
 const statusColors = {
@@ -36,9 +39,39 @@ export const ServiceRequestCard: React.FC<ServiceRequestCardProps> = ({
   request,
   onBoostPrice,
   onCancel,
+  onAccept,
   viewType = 'buyer',
+  sellerLocation,
+  accepting = false,
 }) => {
   const [timeRemaining, setTimeRemaining] = useState<string>('');
+  const [distance, setDistance] = useState<string>('');
+
+  // Calculate distance between seller and buyer
+  useEffect(() => {
+    if (viewType === 'seller' && sellerLocation) {
+      const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371; // Radius of the Earth in kilometers
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      };
+
+      const dist = calculateDistance(
+        sellerLocation.lat,
+        sellerLocation.lng,
+        request.buyerLocation.lat,
+        request.buyerLocation.lng
+      );
+      
+      setDistance(dist < 1 ? `${Math.round(dist * 1000)}m` : `${dist.toFixed(1)}km`);
+    }
+  }, [viewType, sellerLocation, request.buyerLocation]);
 
   useEffect(() => {
     if (request.type === 'instant' && request.expiresAt) {
@@ -67,6 +100,9 @@ export const ServiceRequestCard: React.FC<ServiceRequestCardProps> = ({
     ['pending', 'price_boosted'].includes(request.status);
 
   const canCancel = viewType === 'buyer' && 
+    ['pending', 'price_boosted'].includes(request.status);
+
+  const canAccept = viewType === 'seller' && 
     ['pending', 'price_boosted'].includes(request.status);
 
   const priceWasBoosted = request.currentPrice > request.initialPrice;
@@ -102,7 +138,7 @@ export const ServiceRequestCard: React.FC<ServiceRequestCardProps> = ({
       </div>
 
       {/* Details Grid */}
-      <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 text-sm">
         <div>
           <span className="text-gray-500 dark:text-gray-400">Price:</span>
           <div className="font-semibold text-gray-900 dark:text-white">
@@ -116,11 +152,32 @@ export const ServiceRequestCard: React.FC<ServiceRequestCardProps> = ({
         </div>
 
         <div>
-          <span className="text-gray-500 dark:text-gray-400">Location:</span>
+          <span className="text-gray-500 dark:text-gray-400">
+            {viewType === 'seller' ? 'Distance:' : 'Location:'}
+          </span>
           <div className="font-medium text-gray-900 dark:text-white truncate">
-            {request.buyerLocation.address.split(',')[0]}
+            {viewType === 'seller' && distance ? (
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {distance}
+              </span>
+            ) : (
+              request.buyerLocation.address.split(',')[0]
+            )}
           </div>
         </div>
+
+        {viewType === 'seller' && (
+          <div>
+            <span className="text-gray-500 dark:text-gray-400">Customer:</span>
+            <div className="font-medium text-gray-900 dark:text-white">
+              {request.buyerName}
+            </div>
+          </div>
+        )}
 
         {request.type === 'instant' && request.expiresAt && (
           <div>
@@ -152,13 +209,23 @@ export const ServiceRequestCard: React.FC<ServiceRequestCardProps> = ({
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
         <Link
           to={`/requests/${request.id}`}
           className="flex-1 text-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
         >
           View Details
         </Link>
+
+        {canAccept && onAccept && (
+          <button
+            onClick={() => onAccept(request.id)}
+            disabled={accepting}
+            className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
+          >
+            {accepting ? 'Accepting...' : 'Accept Request'}
+          </button>
+        )}
 
         {canBoostPrice && onBoostPrice && (
           <button
@@ -172,7 +239,7 @@ export const ServiceRequestCard: React.FC<ServiceRequestCardProps> = ({
         {canCancel && onCancel && (
           <button
             onClick={() => onCancel(request.id)}
-            className="px-4 py-2 rounded-lg border border-red-300 dark:border-red-600 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-red-300 dark:border-red-600 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             Cancel
           </button>

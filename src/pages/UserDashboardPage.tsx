@@ -208,16 +208,109 @@ export const UserDashboardPage: React.FC = () => {
     return true;
   });
 
-  // Categories data
+  // Categories data - expanded list
   const categories = [
+    // Construction & Building
     { title: 'Plumber', description: 'Leaks, installations, repairs', rating: 4.7 },
     { title: 'Electrician', description: 'Wiring, lighting, panels', rating: 4.5 },
     { title: 'Welder', description: 'Fabrication, metal repairs', rating: 4.4 },
     { title: 'Carpenter', description: 'Furniture, frames, fittings', rating: 4.2 },
-    { title: 'Technician', description: 'Appliances, diagnostics', rating: 4.6 },
     { title: 'Painter', description: 'Interior, exterior, finishing', rating: 4.3 },
     { title: 'HVAC', description: 'Heating, ventilation, AC', rating: 4.5 },
+    { title: 'Roofing', description: 'Roof repairs, installations', rating: 4.4 },
+    { title: 'Flooring', description: 'Hardwood, tile, carpet installation', rating: 4.3 },
+    { title: 'Masonry', description: 'Brick, stone, concrete work', rating: 4.2 },
+    { title: 'Landscaping', description: 'Garden design, maintenance', rating: 4.6 },
+    
+    // Home Services
     { title: 'Cleaning', description: 'Home, office, deep clean', rating: 4.1 },
+    { title: 'Housekeeping', description: 'Regular home maintenance', rating: 4.2 },
+    { title: 'Pest Control', description: 'Extermination, prevention', rating: 4.3 },
+    { title: 'Window Cleaning', description: 'Residential, commercial', rating: 4.4 },
+    { title: 'Carpet Cleaning', description: 'Deep clean, stain removal', rating: 4.2 },
+    { title: 'Pressure Washing', description: 'Exterior cleaning', rating: 4.5 },
+    
+    // Technical Services
+    { title: 'Technician', description: 'Appliances, diagnostics', rating: 4.6 },
+    { title: 'Computer Repair', description: 'Hardware, software fixes', rating: 4.4 },
+    { title: 'Phone Repair', description: 'Screen, battery, water damage', rating: 4.3 },
+    { title: 'Appliance Repair', description: 'Washer, dryer, refrigerator', rating: 4.5 },
+    { title: 'Network Setup', description: 'WiFi, security systems', rating: 4.2 },
+    { title: 'Smart Home Installation', description: 'Home automation setup', rating: 4.1 },
+    
+    // Automotive
+    { title: 'Auto Mechanic', description: 'Engine, transmission repair', rating: 4.4 },
+    { title: 'Auto Body Repair', description: 'Collision, dent repair', rating: 4.3 },
+    { title: 'Tire Service', description: 'Installation, balancing', rating: 4.5 },
+    { title: 'Oil Change', description: 'Quick oil change service', rating: 4.6 },
+    { title: 'Car Wash', description: 'Exterior, interior cleaning', rating: 4.2 },
+    { title: 'Auto Detailing', description: 'Premium car cleaning', rating: 4.4 },
+    
+    // Personal Services
+    { title: 'Hair Stylist', description: 'Cut, color, styling', rating: 4.5 },
+    { title: 'Barber', description: 'Men\'s haircuts, grooming', rating: 4.6 },
+    { title: 'Makeup Artist', description: 'Special events, photos', rating: 4.4 },
+    { title: 'Massage Therapist', description: 'Relaxation, therapeutic', rating: 4.7 },
+    { title: 'Personal Trainer', description: 'Fitness, nutrition coaching', rating: 4.3 },
+    { title: 'Photographer', description: 'Events, portraits, commercial', rating: 4.5 },
+    { title: 'Videographer', description: 'Weddings, corporate videos', rating: 4.4 },
+    { title: 'Event Planner', description: 'Parties, corporate events', rating: 4.2 },
+    
+    // Professional Services
+    { title: 'Accountant', description: 'Tax preparation, bookkeeping', rating: 4.6 },
+    { title: 'Lawyer', description: 'Legal consultation, representation', rating: 4.4 },
+    { title: 'Consultant', description: 'Business, strategy advice', rating: 4.3 },
+    { title: 'Translator', description: 'Document, live translation', rating: 4.5 },
+    { title: 'Tutor', description: 'Academic subjects, test prep', rating: 4.4 },
+    { title: 'Music Teacher', description: 'Piano, guitar, voice lessons', rating: 4.6 },
+    { title: 'Language Teacher', description: 'ESL, foreign languages', rating: 4.3 },
+    { title: 'Life Coach', description: 'Personal development, goals', rating: 4.2 },
+    
+    // Health & Wellness
+    { title: 'Yoga Instructor', description: 'Classes, private sessions', rating: 4.7 },
+    { title: 'Pilates Instructor', description: 'Group, individual training', rating: 4.5 },
+    { title: 'Nutritionist', description: 'Diet planning, health advice', rating: 4.4 },
+    { title: 'Physical Therapist', description: 'Rehabilitation, injury recovery', rating: 4.6 },
+    { title: 'Chiropractor', description: 'Spinal adjustment, pain relief', rating: 4.3 },
+    { title: 'Dentist', description: 'General, cosmetic dentistry', rating: 4.5 },
+    { title: 'Veterinarian', description: 'Pet health, emergency care', rating: 4.7 },
+    
+    // Creative Services
+    { title: 'Graphic Designer', description: 'Logos, marketing materials', rating: 4.4 },
+    { title: 'Web Designer', description: 'Website design, development', rating: 4.3 },
+    { title: 'Artist', description: 'Custom artwork, murals', rating: 4.5 },
+    { title: 'Writer', description: 'Content, copywriting', rating: 4.2 },
+    { title: 'Editor', description: 'Proofreading, manuscript review', rating: 4.4 },
+    { title: 'Musician', description: 'Live performances, recording', rating: 4.6 },
+    { title: 'DJ', description: 'Events, parties, weddings', rating: 4.3 },
+    
+    // Maintenance & Repair
+    { title: 'Handyman', description: 'General repairs, maintenance', rating: 4.5 },
+    { title: 'Locksmith', description: 'Lock installation, emergency', rating: 4.4 },
+    { title: 'Appliance Installation', description: 'Washer, dryer, dishwasher', rating: 4.3 },
+    { title: 'Furniture Assembly', description: 'IKEA, custom furniture', rating: 4.2 },
+    { title: 'Moving Services', description: 'Local, long-distance moves', rating: 4.1 },
+    { title: 'Storage Solutions', description: 'Storage unit organization', rating: 4.0 },
+    
+    // Specialized Services
+    { title: 'Pool Maintenance', description: 'Cleaning, chemical balance', rating: 4.4 },
+    { title: 'Spa Services', description: 'Facials, body treatments', rating: 4.6 },
+    { title: 'Pet Grooming', description: 'Bathing, trimming, styling', rating: 4.5 },
+    { title: 'Pet Sitting', description: 'Overnight, daily care', rating: 4.7 },
+    { title: 'Childcare', description: 'Babysitting, nanny services', rating: 4.6 },
+    { title: 'Elderly Care', description: 'Companion, assistance', rating: 4.8 },
+    { title: 'House Sitting', description: 'Pet care, security', rating: 4.3 },
+    { title: 'Plant Care', description: 'Garden maintenance, watering', rating: 4.2 },
+    
+    // Business Services
+    { title: 'Virtual Assistant', description: 'Administrative support', rating: 4.3 },
+    { title: 'Data Entry', description: 'Document processing, input', rating: 4.1 },
+    { title: 'Bookkeeping', description: 'Financial record keeping', rating: 4.4 },
+    { title: 'Social Media Management', description: 'Content, engagement', rating: 4.2 },
+    { title: 'Content Creation', description: 'Blogs, articles, videos', rating: 4.3 },
+    { title: 'Marketing', description: 'Digital, traditional marketing', rating: 4.1 },
+    { title: 'Sales', description: 'Lead generation, closing', rating: 4.0 },
+    { title: 'Customer Service', description: 'Support, call handling', rating: 4.2 }
   ];
 
   // Filter categories based on search

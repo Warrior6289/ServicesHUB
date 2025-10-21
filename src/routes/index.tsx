@@ -20,6 +20,7 @@ import { RequestServicePage } from '../pages/RequestServicePage';
 import { ServiceRequestDetailsPage } from '../pages/ServiceRequestDetailsPage';
 import { RequireAdmin, AuthProvider } from '../lib/auth';
 import { RouteErrorBoundary } from '../ui/RouteErrorBoundary';
+import { DashboardRedirect } from '../components/DashboardRedirect';
 import React from 'react';
 
 // Wrapper component that provides Auth context within Router context
@@ -55,7 +56,7 @@ export const router = createBrowserRouter([
       ) },
       { path: '/user-dashboard', element: <UserDashboardPage /> },
       { path: '/seller-dashboard', element: <SellerDashboardPage /> },
-      { path: '/dashboard', element: <UserDashboardPage /> }, // Alias for user dashboard
+      { path: '/dashboard', element: <DashboardRedirect /> }, // Smart redirect based on role
       { path: '/request-service', element: <RequestServicePage /> },
       { path: '/requests/:id', element: <ServiceRequestDetailsPage /> },
       { path: '*', element: <NotFoundPage /> },
