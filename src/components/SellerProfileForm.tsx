@@ -29,6 +29,7 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
   const [certificationInput, setCertificationInput] = React.useState('');
   const [profileImage, setProfileImage] = React.useState<string | null>(initial?.profilePicture || null);
   const [isUploadingImage, setIsUploadingImage] = React.useState(false);
+  const [categorySearch, setCategorySearch] = React.useState('');
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<SellerProfileFormValues>({
     defaultValues: {
@@ -121,6 +122,65 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
     };
     localStorage.setItem('sellerProfile', JSON.stringify(updatedProfile));
   };
+
+  // Filter categories based on search
+  const filteredCategories = React.useMemo(() => {
+    if (!categorySearch.trim()) {
+      return SERVICE_CATEGORIES;
+    }
+    
+    const searchTerm = categorySearch.toLowerCase();
+    return SERVICE_CATEGORIES.filter(category => 
+      category.toLowerCase().includes(searchTerm)
+    );
+  }, [categorySearch]);
+
+  // Group categories by type for better organization
+  const groupedCategories = React.useMemo(() => {
+    const groups: { [key: string]: string[] } = {
+      'Construction & Building': [],
+      'Home Services': [],
+      'Technical Services': [],
+      'Automotive': [],
+      'Personal Services': [],
+      'Professional Services': [],
+      'Health & Wellness': [],
+      'Creative Services': [],
+      'Maintenance & Repair': [],
+      'Specialized Services': [],
+      'Business Services': []
+    };
+
+    filteredCategories.forEach(category => {
+      // Categorize based on the category name
+      if (['Plumber', 'Electrician', 'Welder', 'Carpenter', 'Painter', 'HVAC', 'Roofing', 'Flooring', 'Masonry', 'Drywall', 'Insulation', 'Concrete Work', 'Fencing', 'Landscaping'].includes(category)) {
+        groups['Construction & Building'].push(category);
+      } else if (['Cleaning', 'Housekeeping', 'Laundry', 'Pest Control', 'Window Cleaning', 'Carpet Cleaning', 'Pressure Washing', 'Gutter Cleaning', 'Snow Removal'].includes(category)) {
+        groups['Home Services'].push(category);
+      } else if (['Technician', 'Computer Repair', 'Phone Repair', 'Appliance Repair', 'Electronics Repair', 'Network Setup', 'Security Systems', 'Smart Home Installation'].includes(category)) {
+        groups['Technical Services'].push(category);
+      } else if (['Auto Mechanic', 'Auto Body Repair', 'Tire Service', 'Oil Change', 'Car Wash', 'Auto Detailing', 'Towing'].includes(category)) {
+        groups['Automotive'].push(category);
+      } else if (['Hair Stylist', 'Barber', 'Makeup Artist', 'Nail Technician', 'Massage Therapist', 'Personal Trainer', 'Photographer', 'Videographer', 'Event Planner'].includes(category)) {
+        groups['Personal Services'].push(category);
+      } else if (['Accountant', 'Lawyer', 'Consultant', 'Translator', 'Tutor', 'Music Teacher', 'Language Teacher', 'Life Coach'].includes(category)) {
+        groups['Professional Services'].push(category);
+      } else if (['Yoga Instructor', 'Pilates Instructor', 'Nutritionist', 'Physical Therapist', 'Chiropractor', 'Dentist', 'Veterinarian'].includes(category)) {
+        groups['Health & Wellness'].push(category);
+      } else if (['Graphic Designer', 'Web Designer', 'Artist', 'Writer', 'Editor', 'Musician', 'DJ', 'Singer'].includes(category)) {
+        groups['Creative Services'].push(category);
+      } else if (['Handyman', 'Locksmith', 'Appliance Installation', 'Furniture Assembly', 'Moving Services', 'Storage Solutions'].includes(category)) {
+        groups['Maintenance & Repair'].push(category);
+      } else if (['Pool Maintenance', 'Spa Services', 'Pet Grooming', 'Pet Sitting', 'Childcare', 'Elderly Care', 'House Sitting', 'Plant Care'].includes(category)) {
+        groups['Specialized Services'].push(category);
+      } else if (['Virtual Assistant', 'Data Entry', 'Bookkeeping', 'Social Media Management', 'Content Creation', 'Marketing', 'Sales', 'Customer Service'].includes(category)) {
+        groups['Business Services'].push(category);
+      }
+    });
+
+    // Remove empty groups
+    return Object.entries(groups).filter(([_, categories]) => categories.length > 0);
+  }, [filteredCategories]);
 
   const handleFormSubmit = async (values: SellerProfileFormValues) => {
     setIsSubmitting(true);
@@ -328,29 +388,84 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
                   type="text"
                   placeholder="Search categories..."
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  onChange={(e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    // You could implement filtering here if needed
-                  }}
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
                 />
-                <svg className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                {categorySearch ? (
+                  <button
+                    onClick={() => setCategorySearch('')}
+                    className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                ) : (
+                  <svg className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                )}
+              </div>
+              
+              {/* Quick Filter Buttons */}
+              <div className="space-y-2">
+                <div className="text-sm text-gray-600 dark:text-gray-400">Quick filters:</div>
+                <div className="flex flex-wrap gap-2">
+                  {['Construction', 'Home', 'Technical', 'Automotive', 'Personal', 'Professional', 'Health', 'Creative'].map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setCategorySearch(filter)}
+                      className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setCategorySearch('')}
+                    className="px-3 py-1 text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
               
               {/* Categories organized by sections */}
-              <div className="max-h-60 overflow-y-auto space-y-3">
-                {SERVICE_CATEGORIES.map((category) => (
-                  <label key={category} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
-                    <input
-                      type="checkbox"
-                      checked={watchedServiceCategories?.includes(category) || false}
-                      onChange={() => toggleServiceCategory(category)}
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{category}</span>
-                  </label>
+              <div className="max-h-80 overflow-y-auto space-y-4">
+                {groupedCategories.map(([groupName, categories]) => (
+                  <div key={groupName} className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-600 pb-1">
+                      {groupName}
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ml-2">
+                      {categories.map((category) => (
+                        <label key={category} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+                          <input
+                            type="checkbox"
+                            checked={watchedServiceCategories?.includes(category) || false}
+                            onChange={() => toggleServiceCategory(category)}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{category}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 ))}
+                
+                {filteredCategories.length === 0 && categorySearch && (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p>No categories found matching "{categorySearch}"</p>
+                    <button
+                      onClick={() => setCategorySearch('')}
+                      className="mt-2 text-primary-600 dark:text-primary-400 hover:underline text-sm"
+                    >
+                      Clear search
+                    </button>
+                  </div>
+                )}
               </div>
               
               {/* Selected count */}

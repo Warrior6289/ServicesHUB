@@ -20,8 +20,10 @@ export const UserDashboardPage: React.FC = () => {
   const [services, setServices] = React.useState<PurchasedService[]>([]);
   const [error, setError] = React.useState<string | null>(null);
   
-  // Category search state
+  // Category search and pagination state
   const [categorySearch, setCategorySearch] = React.useState('');
+  const [categoriesToShow, setCategoriesToShow] = React.useState(12); // Show 12 categories initially
+  const [showAllCategories, setShowAllCategories] = React.useState(false);
   
   // Service Requests state
   const [requests, setRequests] = React.useState<ServiceRequest[]>([]);
@@ -97,7 +99,9 @@ export const UserDashboardPage: React.FC = () => {
     
     try {
       const data = await fetchSellersByCategory(categoryName.toLowerCase());
-      setSellers(data);
+      // Ensure we always set an array
+      const sellersData = Array.isArray(data) ? data : [];
+      setSellers(sellersData);
     } catch (error) {
       console.error('Failed to fetch sellers:', error);
       setSellers([]);
@@ -124,6 +128,37 @@ export const UserDashboardPage: React.FC = () => {
     setSellers([]);
     setSelectedCategory(null);
   };
+
+  // Category pagination functions
+  const handleShowMore = () => {
+    setShowAllCategories(true);
+    setCategoriesToShow(categories.length);
+    // Smooth scroll to top of categories section
+    setTimeout(() => {
+      const categoriesSection = document.querySelector('[data-categories-section]');
+      categoriesSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleShowLess = () => {
+    setShowAllCategories(false);
+    setCategoriesToShow(12);
+    // Smooth scroll to top of categories section
+    setTimeout(() => {
+      const categoriesSection = document.querySelector('[data-categories-section]');
+      categoriesSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleLoadMore = () => {
+    setCategoriesToShow(prev => Math.min(prev + 12, categories.length));
+  };
+
+  // Reset pagination when search changes
+  React.useEffect(() => {
+    setCategoriesToShow(12);
+    setShowAllCategories(false);
+  }, [categorySearch]);
 
   // Fetch service requests
   React.useEffect(() => {
@@ -322,6 +357,10 @@ export const UserDashboardPage: React.FC = () => {
     );
   });
 
+  // Get categories to display based on pagination
+  const displayedCategories = filteredCategories.slice(0, categoriesToShow);
+  const hasMoreCategories = filteredCategories.length > categoriesToShow;
+
   return (
     <section className="max-w-none">
       <div className="flex items-center justify-between mb-6">
@@ -364,32 +403,91 @@ export const UserDashboardPage: React.FC = () => {
       {activeTab === 'services' && (
         <>
           {/* Categories Section */}
-          <div className="mt-8">
+          <div className="mt-8" data-categories-section>
         <h2 className="text-xl font-semibold mb-4">Browse Service Categories</h2>
         
-        {/* Search Bar */}
-        <div className="mb-6">
+        {/* Search and Filter Bar */}
+        <div className="mb-6 space-y-4">
           <SearchBar
             placeholder="Search categories..."
             value={categorySearch}
             onChange={setCategorySearch}
             onClear={() => setCategorySearch('')}
           />
+          
+          {/* Quick Filter Tags */}
+          <div className="flex flex-wrap gap-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Quick filters:</span>
+            {['Construction', 'Home Services', 'Technical', 'Automotive', 'Personal', 'Professional'].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setCategorySearch(filter)}
+                className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                {filter}
+              </button>
+            ))}
+            <button
+              onClick={() => setCategorySearch('')}
+              className="px-3 py-1 text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
+            >
+              Clear All
+            </button>
+          </div>
         </div>
 
         {/* Category Grid */}
         {filteredCategories.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCategories.map((category) => (
-              <CategoryCard
-                key={category.title}
-                title={category.title}
-                description={category.description}
-                rating={category.rating}
-                onClick={() => handleCategoryClick(category.title)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {displayedCategories.map((category) => (
+                <CategoryCard
+                  key={category.title}
+                  title={category.title}
+                  description={category.description}
+                  rating={category.rating}
+                  onClick={() => handleCategoryClick(category.title)}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {filteredCategories.length > 12 && (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Showing {displayedCategories.length} of {filteredCategories.length} categories
+                </div>
+                
+                <div className="flex gap-3">
+                  {hasMoreCategories && !showAllCategories && (
+                    <>
+                      <button
+                        onClick={handleLoadMore}
+                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+                      >
+                        Load More ({Math.min(12, filteredCategories.length - categoriesToShow)})
+                      </button>
+                      <button
+                        onClick={handleShowMore}
+                        className="px-4 py-2 border border-primary-600 text-primary-600 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors font-medium"
+                      >
+                        Show All ({filteredCategories.length})
+                      </button>
+                    </>
+                  )}
+                  
+                  {showAllCategories && (
+                    <button
+                      onClick={handleShowLess}
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+                    >
+                      Show Less
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700">
             <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

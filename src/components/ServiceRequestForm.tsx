@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { LocationInput } from './LocationInput';
 import type { Location } from '../types/serviceRequest';
+import { SERVICE_CATEGORIES } from '../mocks/sellerProfile';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 const serviceRequestSchema = z.object({
   categoryId: z.string().min(1, 'Please select a category'),
@@ -30,16 +32,10 @@ type ServiceRequestFormProps = {
   loading?: boolean;
 };
 
-const categories = [
-  { id: 'plumber', name: 'Plumber' },
-  { id: 'electrician', name: 'Electrician' },
-  { id: 'welder', name: 'Welder' },
-  { id: 'carpenter', name: 'Carpenter' },
-  { id: 'hvac', name: 'HVAC' },
-  { id: 'painter', name: 'Painter' },
-  { id: 'cleaner', name: 'Cleaning' },
-  { id: 'technician', name: 'Technician' },
-];
+const categories = SERVICE_CATEGORIES.map(category => ({
+  id: category.toLowerCase().replace(/\s+/g, '-'),
+  name: category
+}));
 
 const timeSlots = [
   '9:00 AM - 11:00 AM',
@@ -56,6 +52,13 @@ export const ServiceRequestForm: React.FC<ServiceRequestFormProps> = ({
 }) => {
   const [requestType, setRequestType] = useState<'instant' | 'scheduled'>('instant');
   const [location, setLocation] = useState<Location | null>(null);
+  const [categorySearch, setCategorySearch] = useState('');
+  
+  const categoryDropdownRef = useClickOutside<HTMLDivElement>(() => {
+    setShowCategoryDropdown(false);
+  });
+  
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
 
   const {
     register,
@@ -74,14 +77,14 @@ export const ServiceRequestForm: React.FC<ServiceRequestFormProps> = ({
     },
   });
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const categoryId = e.target.value;
-    const category = categories.find(c => c.id === categoryId);
-    setValue('categoryId', categoryId);
-    if (category) {
-      setValue('categoryName', category.name);
-    }
-  };
+  // const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const categoryId = e.target.value;
+  //   const category = categories.find(c => c.id === categoryId);
+  //   setValue('categoryId', categoryId);
+  //   if (category) {
+  //     setValue('categoryName', category.name);
+  //   }
+  // };
 
   const handleTypeChange = (type: 'instant' | 'scheduled') => {
     setRequestType(type);
@@ -92,6 +95,18 @@ export const ServiceRequestForm: React.FC<ServiceRequestFormProps> = ({
     setLocation(newLocation);
     setValue('location', newLocation);
   };
+
+  // Filter categories based on search
+  const filteredCategories = React.useMemo(() => {
+    if (!categorySearch.trim()) {
+      return categories;
+    }
+    
+    const searchTerm = categorySearch.toLowerCase();
+    return categories.filter(category => 
+      category.name.toLowerCase().includes(searchTerm)
+    );
+  }, [categorySearch]);
 
   const onFormSubmit = (data: ServiceRequestFormData) => {
     if (!location) {
@@ -146,18 +161,67 @@ export const ServiceRequestForm: React.FC<ServiceRequestFormProps> = ({
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Service Category *
         </label>
-        <select
-          {...register('categoryId')}
-          onChange={handleCategoryChange}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-800 dark:text-white"
-        >
-          <option value="">Select a category</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+        
+        {/* Searchable dropdown */}
+        <div className="relative" ref={categoryDropdownRef}>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Type to search categories..."
+              value={categorySearch || watch('categoryName') || ''}
+              onChange={(e) => {
+                setCategorySearch(e.target.value);
+                setShowCategoryDropdown(true);
+              }}
+              onFocus={() => setShowCategoryDropdown(true)}
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-800 dark:text-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              className="absolute right-3 top-2.5 w-4 h-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          
+          {showCategoryDropdown && (
+            <div className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {filteredCategories.length > 0 ? (
+                <div className="py-2">
+                  {filteredCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => {
+                        setValue('categoryId', category.id);
+                        setValue('categoryName', category.name);
+                        setShowCategoryDropdown(false);
+                        setCategorySearch('');
+                      }}
+                      className="w-full px-4 py-2 text-sm text-left text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 focus:outline-none"
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <p>No categories found</p>
+                  <button
+                    onClick={() => setCategorySearch('')}
+                    className="mt-2 text-primary-600 dark:text-primary-400 hover:underline text-sm"
+                  >
+                    Clear search
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
         {errors.categoryId && (
           <p className="mt-1 text-sm text-red-600">{errors.categoryId.message}</p>
         )}

@@ -1,12 +1,13 @@
 import React from 'react';
 import { useAuth } from '../lib/auth';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDropdown } from '../hooks/useClickOutside';
 
 export const UserRoleToggle: React.FC = () => {
   const { role, loginAs } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const { isOpen, ref, toggleDropdown, closeDropdown } = useDropdown();
 
   const roles = [
     { 
@@ -46,7 +47,7 @@ export const UserRoleToggle: React.FC = () => {
 
   const handleRoleChange = (newRole: 'buyer' | 'seller' | 'admin') => {
     loginAs(newRole);
-    setIsOpen(false);
+    closeDropdown();
     
     // Navigate to the appropriate dashboard based on the new role
     const currentPath = location.pathname;
@@ -69,9 +70,9 @@ export const UserRoleToggle: React.FC = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDropdown}
         className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 transition-colors"
         aria-label="Switch user role"
       >
@@ -118,15 +119,6 @@ export const UserRoleToggle: React.FC = () => {
             ))}
           </div>
         </div>
-      )}
-
-      {/* Overlay to close dropdown when clicking outside */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
       )}
     </div>
   );

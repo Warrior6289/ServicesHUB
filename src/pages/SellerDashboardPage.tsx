@@ -3,11 +3,11 @@ import { ListingCard, type Listing } from '../components/ListingCard';
 import { ListingForm, type ListingFormValues } from '../components/ListingForm';
 import { Skeleton, SkeletonText } from '../components/Skeleton';
 import { createListing as apiCreate, fetchSellerListings, removeListing as apiRemove, updateListing as apiUpdate } from '../api/services';
-import { InstantRequestItem } from '../components/InstantRequestItem';
+import { ServiceRequestCard } from '../components/ServiceRequestCard';
 import { useServiceRequestPolling } from '../hooks/useServiceRequestPolling';
 import { SellerProfileForm } from '../components/SellerProfileForm';
 import { SellerStats } from '../components/SellerStats';
-import { getSellerProfile, initializeSellerProfile, updateSellerProfile } from '../mocks/sellerProfile';
+import { initializeSellerProfile, updateSellerProfile } from '../mocks/sellerProfile';
 import type { SellerProfile } from '../types/seller';
 // import { acceptRequest } from '../api/serviceRequests';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,8 +26,6 @@ export const SellerDashboardPage: React.FC = () => {
   const {
     requests: incomingRequests,
     loading: requestsLoading,
-    newRequestsCount,
-    resetNewRequestsCount,
     refetch,
   } = useServiceRequestPolling({
     enabled: true, // Always poll when seller dashboard is open
@@ -272,9 +270,10 @@ export const SellerDashboardPage: React.FC = () => {
                   ) : sortedRequests.length > 0 ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       {sortedRequests.map((request) => (
-                        <InstantRequestItem
+                        <ServiceRequestCard
                           key={request.id}
                           request={request}
+                          viewType="seller"
                           sellerLocation={sellerLocation}
                           onAccept={handleAcceptRequest}
                           accepting={acceptingId === request.id}

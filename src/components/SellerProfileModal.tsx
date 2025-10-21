@@ -137,7 +137,7 @@ export const SellerProfileModal: React.FC<SellerProfileModalProps> = ({
                       </div>
                     ))}
                   </div>
-                ) : sellers.length > 0 ? (
+                ) : Array.isArray(sellers) && sellers.length > 0 ? (
                   <div className="space-y-4">
                     {sellers.map((seller, index) => (
                       <motion.div

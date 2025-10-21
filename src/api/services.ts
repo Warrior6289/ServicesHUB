@@ -39,7 +39,13 @@ export async function removeListing(id: string) {
 export async function fetchSellersByCategory(categoryId: string): Promise<SellerProfile[]> {
   try {
     const { data } = await api.get(`/categories/${categoryId}/sellers`);
+    // Ensure the response is an array
+    if (Array.isArray(data)) {
     return data as SellerProfile[];
+    } else {
+      console.warn('API returned non-array data, falling back to mock data');
+      return getMockSellersByCategory(categoryId);
+    }
   } catch (error) {
     // Return mock data for development
     console.warn('API not available, returning mock sellers for category:', categoryId);
@@ -63,7 +69,8 @@ function getMockSellersByCategory(categoryId: string): SellerProfile[] {
         category: 'plumber',
         location: 'Downtown',
         responseTime: '< 2 hours',
-        completedJobs: 450
+        completedJobs: 450,
+        serviceCategories: ['Plumber']
       },
       {
         id: 'p2',
@@ -78,7 +85,8 @@ function getMockSellersByCategory(categoryId: string): SellerProfile[] {
         category: 'plumber',
         location: 'Westside',
         responseTime: '< 4 hours',
-        completedJobs: 320
+        completedJobs: 320,
+        serviceCategories: ['Plumber']
       }
     ],
     'electrician': [
@@ -95,7 +103,8 @@ function getMockSellersByCategory(categoryId: string): SellerProfile[] {
         category: 'electrician',
         location: 'Northside',
         responseTime: '< 1 hour',
-        completedJobs: 680
+        completedJobs: 680,
+        serviceCategories: ['Electrician']
       }
     ],
     'welder': [
@@ -112,7 +121,8 @@ function getMockSellersByCategory(categoryId: string): SellerProfile[] {
         category: 'welder',
         location: 'Industrial District',
         responseTime: '< 6 hours',
-        completedJobs: 280
+        completedJobs: 280,
+        serviceCategories: ['Welder']
       }
     ],
     'carpenter': [
@@ -129,12 +139,125 @@ function getMockSellersByCategory(categoryId: string): SellerProfile[] {
         category: 'carpenter',
         location: 'Eastside',
         responseTime: '< 3 hours',
-        completedJobs: 190
+        completedJobs: 190,
+        serviceCategories: ['Carpenter']
+      }
+    ],
+    'technician': [
+      {
+        id: 't1',
+        name: 'Alex Kim',
+        rating: 4.6,
+        reviewsCount: 78,
+        serviceDescription: 'Certified technician specializing in appliance repair and diagnostics.',
+        portfolioImages: ['https://picsum.photos/id/1051/400/300'],
+        pricing: '$60-130/hour',
+        availability: 'Available today',
+        verified: true,
+        category: 'technician',
+        location: 'Central',
+        responseTime: '< 2 hours',
+        completedJobs: 240,
+        serviceCategories: ['Technician', 'Appliance Repair']
+      }
+    ],
+    'painter': [
+      {
+        id: 'pt1',
+        name: 'Maria Garcia',
+        rating: 4.7,
+        reviewsCount: 112,
+        serviceDescription: 'Professional painter with expertise in interior and exterior painting.',
+        portfolioImages: ['https://picsum.photos/id/1061/400/300', 'https://picsum.photos/id/1062/400/300'],
+        pricing: '$50-120/hour',
+        availability: 'Available tomorrow',
+        verified: true,
+        category: 'painter',
+        location: 'Southside',
+        responseTime: '< 4 hours',
+        completedJobs: 180,
+        serviceCategories: ['Painter']
+      }
+    ],
+    'hvac': [
+      {
+        id: 'h1',
+        name: 'Robert Taylor',
+        rating: 4.8,
+        reviewsCount: 145,
+        serviceDescription: 'HVAC specialist providing heating, ventilation, and air conditioning services.',
+        portfolioImages: ['https://picsum.photos/id/1071/400/300'],
+        pricing: '$80-160/hour',
+        availability: 'Available today',
+        verified: true,
+        category: 'hvac',
+        location: 'Northside',
+        responseTime: '< 2 hours',
+        completedJobs: 320,
+        serviceCategories: ['HVAC']
+      }
+    ],
+    'cleaning': [
+      {
+        id: 'cl1',
+        name: 'Jennifer White',
+        rating: 4.4,
+        reviewsCount: 89,
+        serviceDescription: 'Professional cleaning services for homes and offices.',
+        portfolioImages: ['https://picsum.photos/id/1081/400/300'],
+        pricing: '$25-50/hour',
+        availability: 'Available today',
+        verified: true,
+        category: 'cleaning',
+        location: 'Downtown',
+        responseTime: '< 1 hour',
+        completedJobs: 150,
+        serviceCategories: ['Cleaning']
       }
     ]
   };
   
-  return mockSellers[categoryId.toLowerCase()] || [];
+  // Return specific mock data if available, otherwise return generic mock data
+  const specificMockData = mockSellers[categoryId.toLowerCase()];
+  if (specificMockData) {
+    return specificMockData;
+  }
+  
+  // Generic mock data for any category not specifically defined
+  return [
+    {
+      id: `generic-${categoryId}-1`,
+      name: `Professional ${categoryId.charAt(0).toUpperCase() + categoryId.slice(1)}`,
+      rating: 4.5,
+      reviewsCount: 85,
+      serviceDescription: `Experienced ${categoryId} professional providing quality services with attention to detail.`,
+      portfolioImages: ['https://picsum.photos/id/2001/400/300'],
+      pricing: '$60-120/hour',
+      availability: 'Available today',
+      verified: true,
+      category: categoryId,
+      location: 'Local Area',
+      responseTime: '< 3 hours',
+      completedJobs: 150,
+      serviceCategories: [categoryId.charAt(0).toUpperCase() + categoryId.slice(1)]
+    },
+    {
+      id: `generic-${categoryId}-2`,
+      name: `Expert ${categoryId.charAt(0).toUpperCase() + categoryId.slice(1)} Services`,
+      rating: 4.3,
+      reviewsCount: 67,
+      serviceDescription: `Reliable ${categoryId} services with competitive pricing and excellent customer satisfaction.`,
+      portfolioImages: ['https://picsum.photos/id/2002/400/300'],
+      pricing: '$50-110/hour',
+      availability: 'Available tomorrow',
+      verified: true,
+      category: categoryId,
+      location: 'Nearby',
+      responseTime: '< 4 hours',
+      completedJobs: 120,
+      serviceCategories: [categoryId.charAt(0).toUpperCase() + categoryId.slice(1)]
+    }
+  ];
 }
 
 
