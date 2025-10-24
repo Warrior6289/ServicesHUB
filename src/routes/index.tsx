@@ -1,12 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { AppLayout } from '../ui/AppLayout';
+import { SimpleAppLayout } from '../ui/SimpleAppLayout';
 import { AuthProvider } from '../lib/auth';
 import { RouteErrorBoundary } from '../ui/RouteErrorBoundary';
 import { DashboardRedirect } from '../components/DashboardRedirect';
 import React from 'react';
 
 // Lazy load pages for better performance
-const HomePage = React.lazy(() => import('../pages/HomePage').catch(() => ({ default: () => <div>Loading HomePage...</div> })));
+// Lazy load pages for better performance
+const HomePage = React.lazy(() => import('../pages/TestPage').catch(() => ({ default: () => <div>Loading TestPage...</div> })));
 const LoginPage = React.lazy(() => import('../pages/LoginPage').catch(() => ({ default: () => <div>Loading LoginPage...</div> })));
 const SignupPage = React.lazy(() => import('../pages/SignupPage').catch(() => ({ default: () => <div>Loading SignupPage...</div> })));
 const AdminPage = React.lazy(() => import('../pages/AdminPage').catch(() => ({ default: () => <div>Loading AdminPage...</div> })));
@@ -39,7 +40,7 @@ const AppWithAuth: React.FC = () => {
           </div>
         </div>
       }>
-        <AppLayout />
+        <SimpleAppLayout />
       </React.Suspense>
     </AuthProvider>
   );
