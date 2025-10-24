@@ -145,7 +145,7 @@ export const SellerDashboardPage: React.FC = () => {
       alert(`Request accepted! You can now view it in your accepted requests.`);
       refetch(); // Refresh the list
     } catch (error) {
-      console.error('Failed to accept request:', error);
+      // Handle error silently or show user-friendly message
       alert('Failed to accept request. Please try again.');
     } finally {
       setAcceptingId(null);

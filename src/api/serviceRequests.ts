@@ -12,7 +12,7 @@ export async function createInstantRequest(payload: CreateInstantRequestPayload)
     const { data } = await api.post('/service-requests/instant', payload);
     return data as ServiceRequest;
   } catch (error) {
-    console.error('Failed to create instant request:', error);
+    // Handle instant request creation error
     throw error;
   }
 }
@@ -22,7 +22,7 @@ export async function createScheduledRequest(payload: CreateScheduledRequestPayl
     const { data } = await api.post('/service-requests/scheduled', payload);
     return data as ServiceRequest;
   } catch (error) {
-    console.error('Failed to create scheduled request:', error);
+    // Handle scheduled request creation error
     throw error;
   }
 }
@@ -32,7 +32,7 @@ export async function boostRequestPrice(requestId: string, newPrice: number): Pr
     const { data } = await api.patch(`/service-requests/${requestId}/boost-price`, { newPrice });
     return data as ServiceRequest;
   } catch (error) {
-    console.error('Failed to boost request price:', error);
+    // Handle price boost error
     throw error;
   }
 }
@@ -42,7 +42,7 @@ export async function getUserRequests(): Promise<ServiceRequest[]> {
     const { data } = await api.get('/service-requests/user');
     return data as ServiceRequest[];
   } catch (error) {
-    console.error('Failed to fetch user requests:', error);
+    // Handle user requests fetch error
     throw error;
   }
 }
@@ -51,7 +51,7 @@ export async function cancelRequest(requestId: string): Promise<void> {
   try {
     await api.patch(`/service-requests/${requestId}/cancel`);
   } catch (error) {
-    console.error('Failed to cancel request:', error);
+    // Handle request cancellation error
     throw error;
   }
 }
@@ -66,7 +66,7 @@ export async function getNearbyInstantRequests(radius: number, categoryId?: stri
     const { data } = await api.get(`/service-requests/nearby?${params.toString()}`);
     return data as ServiceRequest[];
   } catch (error) {
-    console.error('Failed to fetch nearby requests:', error);
+    // Handle nearby requests fetch error
     throw error;
   }
 }
@@ -76,7 +76,7 @@ export async function acceptRequest(requestId: string): Promise<ServiceRequest> 
     const { data } = await api.post(`/service-requests/${requestId}/accept`);
     return data as ServiceRequest;
   } catch (error) {
-    console.error('Failed to accept request:', error);
+    // Handle request acceptance error
     throw error;
   }
 }
@@ -86,7 +86,7 @@ export async function getSellerRequests(): Promise<ServiceRequest[]> {
     const { data } = await api.get('/service-requests/seller');
     return data as ServiceRequest[];
   } catch (error) {
-    console.error('Failed to fetch seller requests:', error);
+    // Handle seller requests fetch error
     throw error;
   }
 }
@@ -96,7 +96,7 @@ export async function updateRequestStatus(requestId: string, status: ServiceRequ
     const { data } = await api.patch(`/service-requests/${requestId}/status`, { status });
     return data as ServiceRequest;
   } catch (error) {
-    console.error('Failed to update request status:', error);
+    // Handle request status update error
     throw error;
   }
 }
@@ -106,7 +106,7 @@ export async function getRequestById(requestId: string): Promise<ServiceRequest>
     const { data } = await api.get(`/service-requests/${requestId}`);
     return data as ServiceRequest;
   } catch (error) {
-    console.error('Failed to fetch request:', error);
+    // Handle request fetch error
     throw error;
   }
 }

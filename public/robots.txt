@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://services-hub.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /user-dashboard
+Disallow: /seller-dashboard
+Disallow: /profile
+Disallow: /requests/
+
+# Allow public pages
+Allow: /
+Allow: /about
+Allow: /services
+Allow: /how-it-works
+Allow: /pricing
+Allow: /contact
+Allow: /help
+Allow: /faq
+Allow: /terms
+Allow: /privacy
+Allow: /cookies
+Allow: /login
+Allow: /signup

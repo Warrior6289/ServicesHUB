@@ -103,7 +103,7 @@ export const UserDashboardPage: React.FC = () => {
       const sellersData = Array.isArray(data) ? data : [];
       setSellers(sellersData);
     } catch (error) {
-      console.error('Failed to fetch sellers:', error);
+      // Handle sellers fetch error
       setSellers([]);
     } finally {
       setLoadingSellers(false);
@@ -170,7 +170,7 @@ export const UserDashboardPage: React.FC = () => {
           const data = getMockUserRequests();
           setRequests(data);
         } catch (error) {
-          console.error('Failed to fetch requests:', error);
+          // Handle requests fetch error
         } finally {
           setRequestsLoading(false);
         }
@@ -210,7 +210,7 @@ export const UserDashboardPage: React.FC = () => {
       setSelectedRequest(null);
       alert('Price boosted successfully!');
     } catch (error) {
-      console.error('Failed to boost price:', error);
+      // Handle price boost error
       alert('Failed to boost price. Please try again.');
     } finally {
       setBoosting(false);
@@ -227,7 +227,7 @@ export const UserDashboardPage: React.FC = () => {
       setRequests(prev => prev.filter(r => r.id !== requestId));
       alert('Request cancelled successfully');
     } catch (error) {
-      console.error('Failed to cancel request:', error);
+      // Handle request cancellation error
       alert('Failed to cancel request. Please try again.');
     }
   };

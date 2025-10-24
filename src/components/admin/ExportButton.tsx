@@ -104,6 +104,6 @@ export const convertToCSV = (data: any[], filename: string) => {
 export const convertToPDF = (data: any[], filename: string) => {
   // This is a simplified implementation
   // In production, you would use a library like jsPDF or PDFKit
-  console.log('PDF export not implemented yet', { data, filename });
+  // PDF export functionality not yet implemented
   alert('PDF export functionality would be implemented with a proper PDF library like jsPDF');
 };

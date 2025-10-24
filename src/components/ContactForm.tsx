@@ -24,7 +24,7 @@ export const ContactForm: React.FC = () => {
 
   const onSubmit = async (values: ContactFormValues) => {
     await new Promise((r) => setTimeout(r, 1000));
-    console.log('Contact form submitted:', values);
+    // Contact form submitted successfully
     setSubmitted(true);
     reset();
     setTimeout(() => setSubmitted(false), 5000);

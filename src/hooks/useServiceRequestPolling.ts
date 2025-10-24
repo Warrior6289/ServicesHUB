@@ -68,7 +68,7 @@ export function useServiceRequestPolling({
       previousRequestIdsRef.current = currentIds;
       setRequests(data);
     } catch (err) {
-      console.error('Error fetching requests:', err);
+      // Handle requests polling error
       setError(err as Error);
     } finally {
       setLoading(false);

@@ -108,7 +108,7 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
       };
       reader.readAsDataURL(file);
     } catch (error) {
-      console.error('Error uploading image:', error);
+      // Handle image upload error
       alert('Failed to upload image. Please try again.');
       setIsUploadingImage(false);
     }
@@ -196,7 +196,7 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
       // Show success message
       alert('Profile updated successfully!');
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      // Handle profile update error
       alert('Failed to update profile. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -229,8 +229,10 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
             {profileImage ? (
               <img 
                 src={profileImage} 
-                alt="Profile" 
+                alt={`${initial?.name || 'User'} profile picture`}
                 className="w-full h-full object-cover rounded-full"
+                role="img"
+                aria-label="Profile picture"
               />
             ) : (
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,6 +257,7 @@ export const SellerProfileForm: React.FC<SellerProfileFormProps> = ({
                   onChange={handleImageUpload}
                   className="hidden"
                   disabled={isUploadingImage}
+                  aria-label="Upload profile picture"
                 />
                 {isUploadingImage ? 'Uploading...' : 'Upload Photo'}
               </label>

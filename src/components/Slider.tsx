@@ -51,6 +51,8 @@ export const Slider: React.FC = () => {
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
+                role="img"
+                aria-label={`${slide.title} service category`}
               />
               <div className="backdrop-brightness-50 w-full h-full flex items-center justify-center">
                 <div className="text-center px-6">

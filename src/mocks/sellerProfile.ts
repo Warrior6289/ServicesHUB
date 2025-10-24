@@ -28,7 +28,7 @@ export const getSellerProfile = (): SellerProfile | null => {
     }
     return null;
   } catch (error) {
-    console.error('Error loading seller profile:', error);
+    // Handle profile loading error
     return null;
   }
 };
@@ -37,7 +37,7 @@ export const saveSellerProfile = (profile: SellerProfile): void => {
   try {
     localStorage.setItem('sellerProfile', JSON.stringify(profile));
   } catch (error) {
-    console.error('Error saving seller profile:', error);
+    // Handle profile saving error
   }
 };
 

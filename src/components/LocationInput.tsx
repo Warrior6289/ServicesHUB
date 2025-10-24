@@ -95,7 +95,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({ value, onChange, e
           setShowMap(true);
         },
         (error) => {
-          console.error('Error getting location:', error);
+          // Handle geolocation error
           alert('Unable to get your current location. Please enter manually or select on map.');
         }
       );

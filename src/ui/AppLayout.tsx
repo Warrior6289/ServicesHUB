@@ -4,6 +4,8 @@ import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { ToastContainer } from '../components/ToastContainer';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -11,16 +13,19 @@ export const AppLayout: React.FC = () => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 flex flex-col">
-      <Header />
-      <main className={`flex-1 ${isHomePage ? '' : isAuthPage ? 'flex items-center justify-center px-4 py-8' : 'mx-auto max-w-6xl px-4 py-8'}`}>
-        {!isHomePage && !isAuthPage && <Breadcrumbs />}
-        <RouteTransitions>
-          <Outlet />
-        </RouteTransitions>
-      </main>
-      <Footer />
-    </div>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 flex flex-col">
+        <Header />
+        <main className={`flex-1 ${isHomePage ? '' : isAuthPage ? 'flex items-center justify-center px-4 py-8' : 'mx-auto max-w-6xl px-4 py-8'}`}>
+          {!isHomePage && !isAuthPage && <Breadcrumbs />}
+          <RouteTransitions>
+            <Outlet />
+          </RouteTransitions>
+        </main>
+        <Footer />
+        <ToastContainer />
+      </div>
+    </ErrorBoundary>
   );
 };
 

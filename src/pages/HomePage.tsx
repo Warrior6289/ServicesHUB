@@ -1,8 +1,48 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CategoryCard } from '../components/CategoryCard';
 import { useAuth } from '../lib/auth';
 import { Link } from 'react-router-dom';
+
+// Professional worker background images
+const workerImages = [
+  {
+    id: 1,
+    url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&h=1080&fit=crop&crop=center',
+    title: 'Construction Workers',
+    description: 'Skilled construction professionals building the future'
+  },
+  {
+    id: 2,
+    url: 'https://images.unsplash.com/photo-1581578731548-c6d0f3e4c4a8?w=1920&h=1080&fit=crop&crop=center',
+    title: 'Electricians',
+    description: 'Licensed electricians ensuring safe power systems'
+  },
+  {
+    id: 3,
+    url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1920&h=1080&fit=crop&crop=center',
+    title: 'Plumbers',
+    description: 'Expert plumbers solving complex water system issues'
+  },
+  {
+    id: 4,
+    url: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1920&h=1080&fit=crop&crop=center',
+    title: 'Cleaning Professionals',
+    description: 'Dedicated cleaners maintaining pristine environments'
+  },
+  {
+    id: 5,
+    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&h=1080&fit=crop&crop=center',
+    title: 'HVAC Technicians',
+    description: 'Climate control experts ensuring comfort year-round'
+  },
+  {
+    id: 6,
+    url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=1920&h=1080&fit=crop&crop=center',
+    title: 'Carpenters',
+    description: 'Master craftsmen creating beautiful woodwork'
+  }
+];
 
 // Service categories data
 const serviceCategories = [
@@ -117,54 +157,136 @@ const stats = [
 
 export const HomePage: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Auto-rotate images every 6 seconds (allowing for smooth transition)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === workerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentImage = workerImages[currentImageIndex];
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative mx-auto max-w-6xl px-4 py-20 lg:py-32">
+      <section className="relative overflow-hidden min-h-screen flex items-center w-full">
+        {/* Rotating Background Images */}
+        <div className="absolute inset-0 w-full h-full">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentImage.id}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ 
+                duration: 1.2, 
+                ease: [0.25, 0.46, 0.45, 0.94],
+                opacity: { duration: 0.8 },
+                scale: { duration: 1.2 }
+              }}
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed min-w-full min-h-full"
+              style={{
+                backgroundImage: `url('${currentImage.url}')`,
+                backgroundColor: '#1f2937'
+              }}
+            >
+              {/* Overlay for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-600/70 via-primary-500/60 to-accent-500/50"></div>
+              <div className="absolute inset-0 bg-black/15"></div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Content */}
+        <div className="relative mx-auto max-w-6xl px-4 py-20 lg:py-32 w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center text-white"
           >
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl mb-6">
               Find Trusted Professionals
               <span className="block text-accent-200">For Every Job</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/90">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/90 mb-8">
               Connect with skilled professionals for all your home and business needs. 
               From quick fixes to major projects, we've got you covered.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              {!isAuthenticated ? (
-                <>
-                  <Link
-                    to="/signup"
-                    className="rounded-lg bg-white px-8 py-3 text-lg font-semibold text-primary-600 shadow-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Get Started
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="rounded-lg border-2 border-white px-8 py-3 text-lg font-semibold text-white hover:bg-white hover:text-primary-600 transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                </>
-              ) : (
+            {isAuthenticated && (
+              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/user-dashboard"
                   className="rounded-lg bg-white px-8 py-3 text-lg font-semibold text-primary-600 shadow-lg hover:bg-gray-50 transition-colors"
                 >
                   Go to Dashboard
                 </Link>
-              )}
-            </div>
+              </div>
+            )}
           </motion.div>
         </div>
+
+        {/* Professional Stats Badge */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="absolute top-20 right-20 hidden lg:block"
+        >
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+            <div className="text-center text-white">
+              <div className="text-3xl font-bold text-accent-200">500+</div>
+              <div className="text-sm font-medium">Verified Professionals</div>
+              <div className="text-xs text-white/70 mt-1">Ready to help</div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Trust Badge */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
+          className="absolute bottom-20 left-20 hidden lg:block"
+        >
+          <div className="bg-white/15 backdrop-blur-md rounded-full px-6 py-3 border border-white/20">
+            <div className="flex items-center space-x-3 text-white">
+              <svg className="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium">100% Verified</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Image Indicators */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden lg:flex space-x-2">
+          {workerImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                  setCurrentImageIndex(index);
+                  setIsTransitioning(false);
+                }, 300);
+              }}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentImageIndex 
+                  ? 'bg-white w-8' 
+                  : 'bg-white/40 hover:bg-white/60'
+              }`}
+            />
+          ))}
+        </div>
+
+
       </section>
 
       {/* Service Categories Section */}

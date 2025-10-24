@@ -43,12 +43,12 @@ export async function fetchSellersByCategory(categoryId: string): Promise<Seller
     if (Array.isArray(data)) {
     return data as SellerProfile[];
     } else {
-      console.warn('API returned non-array data, falling back to mock data');
+      // API returned unexpected data format, using fallback
       return getMockSellersByCategory(categoryId);
     }
   } catch (error) {
     // Return mock data for development
-    console.warn('API not available, returning mock sellers for category:', categoryId);
+    // API not available, using mock data for development
     return getMockSellersByCategory(categoryId);
   }
 }

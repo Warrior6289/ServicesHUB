@@ -33,7 +33,7 @@ export const ServiceRequestDetailsPage: React.FC = () => {
           throw new Error('Request not found');
         }
       } catch (error) {
-        console.error('Failed to fetch request:', error);
+        // Handle request fetch error
         alert('Request not found');
         navigate('/dashboard');
       } finally {
@@ -73,7 +73,7 @@ export const ServiceRequestDetailsPage: React.FC = () => {
       
       alert('Price boosted successfully! Your request is now more attractive to service providers.');
     } catch (error) {
-      console.error('Failed to boost price:', error);
+      // Handle price boost error
       alert('Failed to boost price. Please try again.');
     } finally {
       setBoosting(false);
@@ -96,7 +96,7 @@ export const ServiceRequestDetailsPage: React.FC = () => {
       alert('Request cancelled successfully');
       navigate('/dashboard');
     } catch (error) {
-      console.error('Failed to cancel request:', error);
+      // Handle request cancellation error
       alert('Failed to cancel request. Please try again.');
     }
   };

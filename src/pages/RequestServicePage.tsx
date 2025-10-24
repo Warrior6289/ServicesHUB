@@ -28,7 +28,7 @@ export const RequestServicePage: React.FC = () => {
         const data = getMockUserRequests(3);
         setRecentRequests(data);
       } catch (error) {
-        console.error('Failed to fetch recent requests:', error);
+        // Handle recent requests fetch error
       }
     };
 
@@ -52,7 +52,7 @@ export const RequestServicePage: React.FC = () => {
         };
 
         // For development, simulate API call
-        console.log('Creating instant request:', payload);
+        // Creating instant request
         
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -91,7 +91,7 @@ export const RequestServicePage: React.FC = () => {
           preferredSellerId: data.preferredSellerId,
         };
 
-        console.log('Creating scheduled request:', payload);
+        // Creating scheduled request
         
         await new Promise(resolve => setTimeout(resolve, 1000));
         
@@ -122,7 +122,7 @@ export const RequestServicePage: React.FC = () => {
       alert(`Request created successfully! Request ID: ${result.id}`);
       navigate(`/requests/${result.id}`);
     } catch (error) {
-      console.error('Failed to create request:', error);
+      // Handle request creation error
       alert('Failed to create request. Please try again.');
     } finally {
       setLoading(false);

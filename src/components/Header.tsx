@@ -38,7 +38,6 @@ export const Header: React.FC = () => {
           ) : (
             <>
               <NavLink to="/login" className={({ isActive }) => `transition-colors duration-200 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded ${isActive ? 'text-primary-600 font-medium' : ''}`}>Login</NavLink>
-              <NavLink to="/signup" className={({ isActive }) => `transition-colors duration-200 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded ${isActive ? 'text-primary-600 font-medium' : ''}`}>Sign Up</NavLink>
               <ThemeToggle />
             </>
           )}
@@ -65,7 +64,6 @@ export const Header: React.FC = () => {
             ) : (
               <>
                 <NavLink onClick={() => setOpen(false)} to="/login" className={({ isActive }) => `rounded px-2 py-1 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800 ${isActive ? 'text-primary-600 font-medium' : ''}`}>Login</NavLink>
-                <NavLink onClick={() => setOpen(false)} to="/signup" className={({ isActive }) => `rounded px-2 py-1 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800 ${isActive ? 'text-primary-600 font-medium' : ''}`}>Sign Up</NavLink>
                 <div className="px-2 py-1">
                   <ThemeToggle />
                 </div>
