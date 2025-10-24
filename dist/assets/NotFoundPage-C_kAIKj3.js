@@ -1,0 +1,2 @@
+import{j as e}from"./ui-D5g_oJ6l.js";import"./vendor-BQpy66Z4.js";import{d as t}from"./router-Crx9FcUI.js";const r=()=>e.jsxs("div",{className:"text-center",children:[e.jsx("h1",{className:"text-3xl font-bold",children:"404"}),e.jsx("p",{className:"mt-2 text-slate-500",children:"Page not found."}),e.jsx(t,{to:"/",className:"mt-6 inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700",children:"Go Home"})]});export{r as NotFoundPage};
+//# sourceMappingURL=NotFoundPage-C_kAIKj3.js.map
