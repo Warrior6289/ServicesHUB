@@ -1,20 +1,19 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ErrorBoundary } from 'react-error-boundary';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorFallback from '../components/ErrorFallback';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
-// Lazy load pages for code splitting
-const HomePage = lazy(() => import('../pages/HomePage'));
-const AboutPage = lazy(() => import('../pages/AboutPage'));
-const RequestServicePage = lazy(() => import('../pages/RequestServicePage'));
-const UserDashboardPage = lazy(() => import('../pages/UserDashboardPage'));
-const SellerDashboardPage = lazy(() => import('../pages/SellerDashboardPage'));
-const ServiceRequestDetailsPage = lazy(() => import('../pages/ServiceRequestDetailsPage'));
-const ProfilePage = lazy(() => import('../pages/ProfilePage'));
-const LoginPage = lazy(() => import('../pages/LoginPage'));
-const RegisterPage = lazy(() => import('../pages/RegisterPage'));
-const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const HomePage = lazy(() => import('../pages/HomePage').then(m => ({ default: m.default })));
+const AboutPage = lazy(() => import('../pages/AboutPage').then(m => ({ default: m.default })));
+const RequestServicePage = lazy(() => import('../pages/RequestServicePage').then(m => ({ default: m.default })));
+const UserDashboardPage = lazy(() => import('../pages/UserDashboardPage').then(m => ({ default: m.default })));
+const SellerDashboardPage = lazy(() => import('../pages/SellerDashboardPage').then(m => ({ default: m.default })));
+const ServiceRequestDetailsPage = lazy(() => import('../pages/ServiceRequestDetailsPage').then(m => ({ default: m.default })));
+const ProfilePage = lazy(() => import('../pages/ProfilePage').then(m => ({ default: m.default })));
+const LoginPage = lazy(() => import('../pages/LoginPage').then(m => ({ default: m.default })));
+const SignupPage = lazy(() => import('../pages/SignupPage').then(m => ({ default: m.default })));
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage').then(m => ({ default: m.default })));
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -29,13 +28,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppRoutes = () => {
   return (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onError={(error, errorInfo) => {
-        console.error('Route Error:', error, errorInfo);
-        // Log to error reporting service
-      }}
-    >
+    <ErrorBoundary fallback={ErrorFallback}>
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           {/* Public Routes */}
@@ -67,7 +60,7 @@ const AppRoutes = () => {
             path="/register"
             element={
               <PublicRoute>
-                <RegisterPage />
+                <SignupPage />
               </PublicRoute>
             }
           />

@@ -1,31 +1,31 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '../ui/AppLayout';
-import { RequireAdmin, AuthProvider } from '../lib/auth';
+import { AuthProvider } from '../lib/auth';
 import { RouteErrorBoundary } from '../ui/RouteErrorBoundary';
 import { DashboardRedirect } from '../components/DashboardRedirect';
 import React from 'react';
 
 // Lazy load pages for better performance
-const HomePage = React.lazy(() => import('../pages/HomePage').then(m => ({ default: m.HomePage })));
-const LoginPage = React.lazy(() => import('../pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const SignupPage = React.lazy(() => import('../pages/SignupPage').then(m => ({ default: m.SignupPage })));
-const AdminPage = React.lazy(() => import('../pages/AdminPage').then(m => ({ default: m.AdminPage })));
-const UserDashboardPage = React.lazy(() => import('../pages/UserDashboardPage').then(m => ({ default: m.UserDashboardPage })));
-const SellerDashboardPage = React.lazy(() => import('../pages/SellerDashboardPage').then(m => ({ default: m.SellerDashboardPage })));
-const ProfilePage = React.lazy(() => import('../pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
-const AboutPage = React.lazy(() => import('../pages/AboutPage').then(m => ({ default: m.AboutPage })));
-const NotFoundPage = React.lazy(() => import('../pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
-const ServicesPage = React.lazy(() => import('../pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
-const HowItWorksPage = React.lazy(() => import('../pages/HowItWorksPage').then(m => ({ default: m.HowItWorksPage })));
-const PricingPage = React.lazy(() => import('../pages/PricingPage').then(m => ({ default: m.PricingPage })));
-const ContactPage = React.lazy(() => import('../pages/ContactPage').then(m => ({ default: m.ContactPage })));
-const HelpCenterPage = React.lazy(() => import('../pages/HelpCenterPage').then(m => ({ default: m.HelpCenterPage })));
-const FAQPage = React.lazy(() => import('../pages/FAQPage').then(m => ({ default: m.FAQPage })));
-const TermsPage = React.lazy(() => import('../pages/TermsPage').then(m => ({ default: m.TermsPage })));
-const PrivacyPage = React.lazy(() => import('../pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
-const CookiesPage = React.lazy(() => import('../pages/CookiesPage').then(m => ({ default: m.CookiesPage })));
-const RequestServicePage = React.lazy(() => import('../pages/RequestServicePage').then(m => ({ default: m.RequestServicePage })));
-const ServiceRequestDetailsPage = React.lazy(() => import('../pages/ServiceRequestDetailsPage').then(m => ({ default: m.ServiceRequestDetailsPage })));
+const HomePage = React.lazy(() => import('../pages/HomePage'));
+const LoginPage = React.lazy(() => import('../pages/LoginPage'));
+const SignupPage = React.lazy(() => import('../pages/SignupPage'));
+const AdminPage = React.lazy(() => import('../pages/AdminPage'));
+const UserDashboardPage = React.lazy(() => import('../pages/UserDashboardPage'));
+const SellerDashboardPage = React.lazy(() => import('../pages/SellerDashboardPage'));
+const ProfilePage = React.lazy(() => import('../pages/ProfilePage'));
+const AboutPage = React.lazy(() => import('../pages/AboutPage'));
+const NotFoundPage = React.lazy(() => import('../pages/NotFoundPage'));
+const ServicesPage = React.lazy(() => import('../pages/ServicesPage'));
+const HowItWorksPage = React.lazy(() => import('../pages/HowItWorksPage'));
+const PricingPage = React.lazy(() => import('../pages/PricingPage'));
+const ContactPage = React.lazy(() => import('../pages/ContactPage'));
+const HelpCenterPage = React.lazy(() => import('../pages/HelpCenterPage'));
+const FAQPage = React.lazy(() => import('../pages/FAQPage'));
+const TermsPage = React.lazy(() => import('../pages/TermsPage'));
+const PrivacyPage = React.lazy(() => import('../pages/PrivacyPage'));
+const CookiesPage = React.lazy(() => import('../pages/CookiesPage'));
+const RequestServicePage = React.lazy(() => import('../pages/RequestServicePage'));
+const ServiceRequestDetailsPage = React.lazy(() => import('../pages/ServiceRequestDetailsPage'));
 
 // Wrapper component that provides Auth context within Router context
 const AppWithAuth: React.FC = () => {
@@ -60,11 +60,7 @@ export const router = createBrowserRouter([
       { path: '/terms', element: <TermsPage /> },
       { path: '/privacy', element: <PrivacyPage /> },
       { path: '/cookies', element: <CookiesPage /> },
-      { path: '/admin', element: (
-        <RequireAdmin>
-          <AdminPage />
-        </RequireAdmin>
-      ) },
+      { path: '/admin', element: <AdminPage /> },
       { path: '/user-dashboard', element: <UserDashboardPage /> },
       { path: '/seller-dashboard', element: <SellerDashboardPage /> },
       { path: '/dashboard', element: <DashboardRedirect /> }, // Smart redirect based on role

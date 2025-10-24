@@ -1,4 +1,4 @@
-import { config } from '../config/env';
+// import { config } from '../config/env';
 
 // Google Analytics 4 service
 class AnalyticsService {
@@ -6,7 +6,7 @@ class AnalyticsService {
   private isInitialized: boolean = false;
 
   constructor() {
-    this.measurementId = config.analytics.measurementId;
+    this.measurementId = 'G-XXXXXXXXXX'; // Placeholder
   }
 
   // Initialize Google Analytics

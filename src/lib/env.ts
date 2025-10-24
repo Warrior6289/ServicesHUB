@@ -9,8 +9,8 @@ interface EnvironmentConfig {
 
 function validateEnvironment(): EnvironmentConfig {
   const requiredEnvVars = {
-    NODE_ENV: import.meta.env.NODE_ENV,
-    VITE_APP_VERSION: import.meta.env.VITE_APP_VERSION,
+    NODE_ENV: import.meta.env['NODE_ENV'],
+    VITE_APP_VERSION: import.meta.env['VITE_APP_VERSION'],
   };
 
   // Validate required environment variables
@@ -22,8 +22,8 @@ function validateEnvironment(): EnvironmentConfig {
     API_BASE_URL: '/api', // Use relative path for Vercel serverless functions
     NODE_ENV: requiredEnvVars.NODE_ENV as EnvironmentConfig['NODE_ENV'],
     APP_VERSION: requiredEnvVars.VITE_APP_VERSION || '1.0.0',
-    SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,
-    ANALYTICS_ID: import.meta.env.VITE_ANALYTICS_ID,
+    SENTRY_DSN: import.meta.env['VITE_SENTRY_DSN'],
+    ANALYTICS_ID: import.meta.env['VITE_ANALYTICS_ID'],
   };
 
   // Log configuration in development

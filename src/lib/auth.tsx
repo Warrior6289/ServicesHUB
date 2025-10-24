@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
 import { authApi, handleApiError } from '../api/client';
 
 // Types
@@ -37,6 +37,8 @@ interface AuthContextType extends AuthState {
   refreshAuth: () => Promise<void>;
   clearError: () => void;
   updateUser: (userData: Partial<User>) => void;
+  role?: 'buyer' | 'seller' | 'admin';
+  loginAs?: (role: 'buyer' | 'seller' | 'admin') => void;
 }
 
 // Initial state
@@ -323,6 +325,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     refreshAuth,
     clearError,
     updateUser,
+    role: state.user?.role,
+    loginAs: (role: 'buyer' | 'seller' | 'admin') => {
+      // Mock implementation for development
+      console.log('Login as role:', role);
+    },
   };
 
   return (
